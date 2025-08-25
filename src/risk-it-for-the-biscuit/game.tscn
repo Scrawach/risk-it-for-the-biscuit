@@ -1,0 +1,58 @@
+[gd_scene load_steps=9 format=3 uid="uid://drsxcrqg20dtf"]
+
+[ext_resource type="Script" uid="uid://6w3iovqtf0rr" path="res://interactions/mouse_interaction.gd" id="1_80nbo"]
+[ext_resource type="Script" uid="uid://o1iv5eoe3lqi" path="res://interactions/interactable.gd" id="1_e2o6t"]
+[ext_resource type="PackedScene" uid="uid://cgcsqbrefwfm2" path="res://player/ui/player_hud.tscn" id="3_feb5d"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_e2o6t"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_feb5d"]
+sky_material = SubResource("ProceduralSkyMaterial_e2o6t")
+
+[sub_resource type="Environment" id="Environment_fc0e3"]
+background_mode = 2
+sky = SubResource("Sky_feb5d")
+tonemap_mode = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_80nbo"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_e2o6t"]
+
+[node name="Game" type="Node"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_fc0e3")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="World3D" type="Node3D" parent="."]
+
+[node name="Box" type="Node3D" parent="World3D"]
+
+[node name="Interact Area3D" type="Area3D" parent="World3D/Box"]
+script = ExtResource("1_e2o6t")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World3D/Box/Interact Area3D"]
+shape = SubResource("BoxShape3D_80nbo")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="World3D/Box/Interact Area3D"]
+mesh = SubResource("BoxMesh_e2o6t")
+
+[node name="Camera Point" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 0, 0)
+
+[node name="Camera Length" type="Node3D" parent="Camera Point"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
+
+[node name="Camera3D" type="Camera3D" parent="Camera Point/Camera Length"]
+
+[node name="Mouse Interaction" type="Node" parent="Camera Point" node_paths=PackedStringArray("camera", "player_hud")]
+script = ExtResource("1_80nbo")
+camera = NodePath("../Camera Length/Camera3D")
+player_hud = NodePath("../../Player HUD")
+
+[node name="Player HUD" parent="." instance=ExtResource("3_feb5d")]
